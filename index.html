@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Wishlist</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -18,7 +17,6 @@
     .item img {
       max-width: 200px;
       height: auto;
-      display: block;
       margin-top: 10px;
     }
   </style>
@@ -28,17 +26,46 @@
   <div id="wishlist">Načítání...</div>
 
   <script>
-    const rawURL = 'https://cdn.jsdelivr.net/gh/4me280-webdesign-a-uzivatelska-rozhrani/Tomas-Mlynar-wishlist/wishlist.md';
+    const mdUrl = 'https://cdn.jsdelivr.net/gh/4me280-webdesign-a-uzivatelska-rozhrani/Tomas-Mlynar-wishlist/wishlist.md';
 
-    fetch(rawURL)
+    fetch(mdUrl)
       .then(response => {
-        if (!response.ok) throw new Error('Chyba načítání dat.');
+        if (!response.ok) {
+          throw new Error('Chyba načítání souboru');
+        }
         return response.text();
       })
       .then(text => {
-        const lines = text.trim().split('\n').filter(l => l.trim());
+        const lines = text.trim().split('\n');
         const container = document.getElementById('wishlist');
         container.innerHTML = '';
 
-        for (let i = 0; i < lines.length; i += 5) {
-          const name = lines
+        for (let i = 0; i < lines.length; i++) {
+          if (!lines[i].startsWith('- ')) continue;
+
+          const name = lines[i].replace('- ', '').trim();
+          const price = lines[i + 1]?.trim() || '';
+          const description = lines[i + 2]?.trim() || '';
+          const link = lines[i + 3]?.trim() || '';
+          const image = lines[i + 4]?.trim() || '';
+
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <h2>${name}</h2>
+            <p><strong>${price}</strong></p>
+            <p>${description}</p>
+            <p><a href="${link}" target="_blank">Odkaz</a></p>
+            <img src="${image}" alt="${name}">
+          `;
+
+          container.appendChild(item);
+          i += 4; // přeskočit k další položce
+        }
+      })
+      .catch(err => {
+        document.getElementById('wishlist').innerText = 'Chyba při načítání: ' + err.message;
+      });
+  </script>
+</body>
+</html>
