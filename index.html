@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Wishlist</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
-      margin: 2rem;
-      line-height: 1.6;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
     }
-    img {
-      max-width: 100%;
+    .item {
+      border-bottom: 1px solid #ccc;
+      padding: 20px 0;
+    }
+    .item img {
+      max-width: 200px;
       height: auto;
+      display: block;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h1>Wishlist</h1>
-  <div id="markdown-content">Načítání...</div>
+  <div id="wishlist">Načítání...</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    const markdownUrl = 'https://cdn.jsdelivr.net/gh/4me280-webdesign-a-uzivatelska-rozhrani/Tomas-Mlynar-wishlist/wishlist.md';
+    const rawURL = 'https://cdn.jsdelivr.net/gh/4me280-webdesign-a-uzivatelska-rozhrani/Tomas-Mlynar-wishlist/wishlist.md';
 
-    fetch(markdownUrl)
-      .then(response => response.text())
-      .then(markdown => {
-        document.getElementById('markdown-content').innerHTML = marked.parse(markdown);
+    fetch(rawURL)
+      .then(response => {
+        if (!response.ok) throw new Error('Chyba načítání dat.');
+        return response.text();
       })
-      .catch(error => {
-        document.getElementById('markdown-content').textContent = 'Chyba při načítání wishlistu.';
-        console.error(error);
-      });
-  </script>
-</body>
-</html>
+      .then(text => {
+        const lines = text.trim().split('\n').filter(l => l.trim());
+        const container = document.getElementById('wishlist');
+        container.innerHTML = '';
+
+        for (let i = 0; i < lines.length; i += 5) {
+          const name = lines
