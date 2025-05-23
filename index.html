@@ -20,19 +20,18 @@
   <h1>Wishlist</h1>
   <div id="markdown-content">Načítání...</div>
 
-  <!-- Marked.js na převod Markdownu -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    const markdownUrl = 'https://cdn.jsdelivr.net/gh/Tomas-Mlynar/Tomas-Mlynar-wishlist/wishlist.md'; // uprav dle repozitáře
+    const markdownUrl = 'https://cdn.jsdelivr.net/gh/Tomas-Mlynar/Tomas-Mlynar-wishlist/wishlist.md';
 
     fetch(markdownUrl)
       .then(response => response.text())
       .then(markdown => {
         document.getElementById('markdown-content').innerHTML = marked.parse(markdown);
       })
-      .catch(err => {
-        document.getElementById('markdown-content').textContent = 'Chyba při načítání souboru.';
-        console.error(err);
+      .catch(error => {
+        document.getElementById('markdown-content').textContent = 'Chyba při načítání wishlistu.';
+        console.error(error);
       });
   </script>
 </body>
